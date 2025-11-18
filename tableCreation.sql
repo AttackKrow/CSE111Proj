@@ -13,11 +13,11 @@ CREATE TABLE Employees (
 
 CREATE TABLE Payments (
     p_id INT PRIMARY KEY ,
+    p_method VARCHAR(50),
+    p_transactiondate DATETIME,
     p_amount DECIMAL(10, 2),
     p_c_id INT NOT NULL,
     p_e_id INT NOT NULL,
-    p_method VARCHAR(50),
-    p_transactiondate DATETIME,
     FOREIGN KEY (p_c_id) REFERENCES Customers(c_id),
     FOREIGN KEY (p_e_id) REFERENCES Employees(e_id)
 );
