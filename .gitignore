@@ -1,0 +1,9 @@
+# Python cache files
+__pycache__/
+
+# Compiled Python files (if they end up in the root)
+*.pyc
+
+# Virtual environments (also good practice to ignore)
+venv/
+.venv/
