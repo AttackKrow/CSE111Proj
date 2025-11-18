@@ -1,5 +1,5 @@
 1)   Register Customer (Add to customer table)
-2)   Remove Customer (Remove from customer table by email(?)/id)
+2)   Edit Customer info (Change a field in the customer's entry in the customers table)
 3)   Add new Bike (Add to Bike table)
 4)   Remove Bike (Remove from Bike table by id)
 5)   Get Customer Payment History (From customer email/name, find all associated payments)
