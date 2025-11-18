@@ -8,8 +8,15 @@ QUERIES = {
     #2
     '2': {
         'label': 'Edit Customer Info from Email (name, email, or phone)',
-        'sql': "UPDATE Customers SET ? = ? WHERE c_email  = ?",
-        'params': ['Field','Value','Email']
+        'sql': """  UPDATE Customers
+                    SET 
+                        c_name = CASE UPPER(?1) WHEN 'NAME' THEN ?2 ELSE c_name END,
+                        c_email = CASE UPPER(?1) WHEN 'EMAIL' THEN ?2 ELSE c_email END,
+                        c_phone = CASE UPPER(?1) WHEN 'PHONE' THEN ?2 ELSE c_phone END
+                    WHERE 
+                        c_email = ?3
+                        AND UPPER(?1) IN ('NAME', 'EMAIL', 'PHONE');""",
+        'params': ['Field (Name, Email, or Phone)','New Field Value','Current Email of Customer on File']
     },
     #3
     "3": {
