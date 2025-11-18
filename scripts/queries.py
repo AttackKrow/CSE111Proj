@@ -114,6 +114,14 @@ QUERIES = {
         'sql':["SELECT * FROM Customers WHERE c_email = ?",
                "SELECT * FROM Payments WHERE p_c_id = (SELECT c_id FROM Customers WHERE c_email = ?)" ],
         'params': ['Email Address']
+    },
+    #6
+    '6': {
+        'label': 'Find Customer Rental History by Email',
+        'sql':[ "SELECT * FROM Customers WHERE c_email = ?",
+                "SELECT * FROM Rentals WHERE r_c_id = (SELECT c_id FROM Customers WHERE c_email = ?)",
+                "SELECT * FROM Rental_Bikes WHERE rb_r_id IN (SELECT r_id FROM Rentals WHERE r_c_id = (SELECT c_id FROM Customers WHERE c_email = ?))" ],
+        'params': ['Email Address']
     }
 
 }

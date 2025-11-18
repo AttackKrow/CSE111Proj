@@ -25,14 +25,45 @@ def execute_sql(conn, sql_command, params=(), print_header=True):
         if cur.description is not None:
             rows = cur.fetchall()
             if rows:
-                if print_header:
-                    print("-" * 50)
-                    print("RESULTS:")
-                # Print column headers
-                print([desc[0] for desc in cur.description])
-                # Print rows
+
+                # 1. Get column names
+                column_names = [desc[0] for desc in cur.description]
+                
+                # 2. Initialize max_widths with header lengths
+                max_widths = [len(name) for name in column_names]
+                
+                # 3. Convert all rows to strings and find max width for each column
+                str_rows = []
                 for row in rows:
-                    print(tuple(row))
+                    str_row = []
+                    for i, value in enumerate(row):
+                        # Convert value to string for length calculation
+                        str_value = str(value)
+                        str_row.append(str_value)
+                        # Update max width if current value length is greater
+                        max_widths[i] = max(max_widths[i], len(str_value))
+                    str_rows.append(str_row)
+
+                # Add a small padding (e.g., 2 spaces) to all widths
+                total_width = sum(max_widths) + len(max_widths) * 2
+                
+                # 4. Create a format string for printing
+                header_format = "".join([f"{{:<{width + 2}}}" for width in max_widths])
+                
+                if print_header:
+                    # Use total_width for the main separator
+                    print("-" * total_width) 
+                    print("RESULTS:")
+                
+                # 🏆 Print the PADDED column names
+                print(header_format.format(*column_names))
+                
+                # Print a second separator line for table structure
+                print("-" * total_width) 
+                
+                # Print PADDED rows
+                for str_row in str_rows:
+                    print(header_format.format(*str_row))
                 # Commit if a DML command returned rows (like RETURNING)
                 if not sql_command.strip().upper().startswith("SELECT"):
                     conn.commit()
