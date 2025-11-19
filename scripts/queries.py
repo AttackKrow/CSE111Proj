@@ -155,7 +155,12 @@ QUERIES = {
         'sql':  """INSERT INTO Employees (e_name, e_position) VALUES (?, ?)""",
         'params': ['Name', 'Position']
     },
-
+    #11
+    '11': {
+        'label':'Remove Employee by ID',
+        'sql':  "DELETE FROM Employees WHERE e_id = ?",
+        'params': ['Employee ID']
+    },
 
 
     #17

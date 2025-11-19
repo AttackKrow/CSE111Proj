@@ -1,19 +1,19 @@
 CREATE TABLE Customers (
-    c_id INT PRIMARY KEY ,
-    c_name VARCHAR(100) NOT NULL,
-    c_email VARCHAR(100) UNIQUE NOT NULL,
-    c_phone VARCHAR(15)
+    c_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    c_name TEXT NOT NULL,
+    c_email TEXT UNIQUE NOT NULL,
+    c_phone TEXT
 );
 
 CREATE TABLE Employees (
-    e_id INT PRIMARY KEY ,
-    e_name VARCHAR(100) NOT NULL,
-    e_position VARCHAR(50)
+    e_id INTEGER PRIMARY KEY AUTOINCREMENT ,
+    e_name TEXT NOT NULL,
+    e_position TEXT
 );
 
 CREATE TABLE Payments (
-    p_id INT PRIMARY KEY ,
-    p_method VARCHAR(50),
+    p_id INTEGER PRIMARY KEY AUTOINCREMENT ,
+    p_method TEXT,
     p_transactiondate DATETIME,
     p_amount DECIMAL(10, 2),
     p_c_id INT NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE Payments (
 
 
 CREATE TABLE Rentals (
-    r_id INT PRIMARY KEY ,
+    r_id INTEGER PRIMARY KEY AUTOINCREMENT ,
     r_c_id INT NOT NULL,
     r_startdate DATETIME NOT NULL,
     r_enddate DATETIME,
@@ -39,9 +39,9 @@ CREATE TABLE Rentals (
 
 
 CREATE TABLE Bikes (
-    b_id INT PRIMARY KEY ,
-    b_type VARCHAR(50) NOT NULL,
-    b_model VARCHAR(100) NOT NULL,
+    b_id INTEGER PRIMARY KEY AUTOINCREMENT ,
+    b_type TEXT NOT NULL,
+    b_model TEXT NOT NULL,
     b_hourlyrate DECIMAL(10, 2) NOT NULL
 );
 
@@ -53,7 +53,7 @@ CREATE TABLE Rental_Bikes (
 );
 
 CREATE TABLE Maintenance (
-    m_id INT PRIMARY KEY ,
+    m_id INTEGER PRIMARY KEY AUTOINCREMENT ,
     m_b_id INT NOT NULL,
     m_startdate DATETIME NOT NULL,
     m_enddate DATETIME NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE Maintenance (
 CREATE TABLE Maintenance_Assignments (
     ma_m_id INT NOT NULL,
     ma_e_id INT NOT NULL,
-    ma_role VARCHAR(50),
+    ma_role TEXT,
     FOREIGN KEY (ma_m_id) REFERENCES Maintenance(m_id),
     FOREIGN KEY (ma_e_id) REFERENCES Employees(e_id)
 );
