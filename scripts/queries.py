@@ -161,7 +161,64 @@ QUERIES = {
         'sql':  "DELETE FROM Employees WHERE e_id = ?",
         'params': ['Employee ID']
     },
+    #12 
+    '12': {
+        'label':'Add New Rental and Link Bikes',
+        'sql': [
+            """
+            WITH Cust AS (SELECT c_id FROM Customers WHERE c_email = ?1),
+            Emp AS (SELECT e_id FROM Employees WHERE e_id = ?4),
+            Calc AS (
+                -- Uses simple hour subtraction for billable hours and cost
+                SELECT
+                    (CAST(strftime('%H', ?3) AS INT) - CAST(strftime('%H', ?2) AS INT)) AS billable_hours,
+                    (CAST(strftime('%H', ?3) AS INT) - CAST(strftime('%H', ?2) AS INT)) * (
+                        SELECT SUM(b_hourlyrate)
+                        FROM Bikes
+                        WHERE b_id IN (SELECT value FROM json_each('["' || REPLACE(?5, ',', '","') || '"]')) -- ?5 is Bike IDs
+                    ) AS total_cost
+            )
+            INSERT INTO Rentals (r_c_id, r_startdate, r_enddate, r_billablehours, r_totalcost, r_e_id)
+            SELECT
+                T2.c_id, ?2, ?3, T1.billable_hours, T1.total_cost, T3.e_id
+            FROM Calc T1, Cust T2, Emp T3;
+            """,
 
+            """
+            -- Step 2: Insert Rental_Bikes (Relies on MAX(r_id))
+            -- This step uses the original 5 parameters, but only needs ?5 for bike IDs.
+            INSERT INTO Rental_Bikes (rb_r_id, rb_b_id)
+            SELECT
+                -- Gets the highest ID, which should be the one just inserted
+                (SELECT MAX(r_id) FROM Rentals),
+                value
+            -- We must reference all 5 parameters to satisfy the driver's requirement for all SQL statements
+            FROM json_each('["' || REPLACE(?5, ',', '","') || '"]'), (SELECT ?1, ?2, ?3, ?4) AS dummy_bindings; 
+            """
+        ],
+        'params': ['Customer Email', 'Start Date (YY-MM-DD HH:MM)', 'End Date (YY-MM-DD HH:MM)', 'Employee ID', 'Bike IDs (Comma Separated)']
+    },
+    #13
+    '13': {
+        'label':'Add Payment for a Rental by Rental ID',
+        'sql':  """ """,
+        'params': ['Rental ID', 'Method']
+        # Get customer and employee from rental ID, date from datetime(), amount from rental ID too
+    },
+    #14
+    '14': {
+        'label':'Schedule Bike Maintenance',
+        'sql':  """INSERT INTO Maintenance (m_b_id, m_startdate, m_type) VALUES (?, ?, ?)""",
+        'params': ['Bike ID', 'Start Date (YY-MM-DD)', 'Type of Maintenance']
+    },
+    #15
+    '15': {
+        'label':'Finish Bike Maintenance',
+        'sql':  """UPDATE Maintenance 
+                    SET m_enddate = ?, m_e_id = ? 
+                    WHERE m_b_id = ? AND m_enddate IS NULL""",
+        'params': ['End Date (YY-MM-DD)', 'Employee ID', 'Bike ID']
+    },
 
     #17
     '17': {

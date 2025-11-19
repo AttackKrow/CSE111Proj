@@ -9,12 +9,13 @@
 9)   Find available bikes of a type (For a given datetime, find bikes of given type not already rented)
 10)   Add new Employee (Add to employee table)
 11)   Remove Employee (Remove from employee table)
-12)   Add rental and payment (Add rental data and payment info for a customer by name/email)
-13)   Schedule Bike Maintenance (No employee info or end date for this one)
-14)   Finish Bike Maintenance (Add employees, end date, and type)
-15)   View payment for rental (display payment by rental ID)
-16)   View all available Bikes (For a given datetime, find bikes not already rented)
-17)   View Rental History of a Bike by ID
-18)   
+12)   Add rental (Add rental data for a customer by name/email)
+13)   Add Payment (Add payment data for a rental by ID)
+14)   Schedule Bike Maintenance (No employee info or end date for this one)
+15)   Finish Bike Maintenance (Add employees, end date, and type)
+16)   View payment for rental (display payment by rental ID)
+17)   View all available Bikes (For a given datetime, find bikes not already rented)
+18)   View Rental History of a Bike by ID
 19)   
 20)   
+   

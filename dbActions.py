@@ -71,17 +71,18 @@ def execute_sql(conn, sql_command, params=(), print_header=True):
                 print("Query successful, but returned no rows.")
             return rows
         
-        # DML (INSERT, UPDATE, DELETE)
+        # DML (INSERT, UPDATE, DELETE, etc.)
         conn.commit()
 
-        command_type = sql_command.strip().upper().split()[0]
-        
-        if command_type == "INSERT" and cur.lastrowid > 0:
-            print(f"Command successful: Last inserted ID is {cur.lastrowid}")
+        # Check for DML success based on rows affected
+        if cur.rowcount > 0:
+            print(f"✅ Query successful. {cur.rowcount} row(s) affected.")
+        elif cur.rowcount == 0:
+            # This covers DELETE/UPDATE that matched no rows, or an INSERT without RETURNING
+            print("✅ Query successful. No rows were affected (0 rows modified/deleted.")
         else:
-            print(f"Command successful: {cur.rowcount} rows affected.")
-            
-        return cur.rowcount
+            # cur.rowcount is typically -1 for non-DML (like CREATE TABLE) or when not available
+            print(f"✅ Query successful. Transaction committed.") 
         
     except Error as e:
         # This will catch OperationalError if the table doesn't exist
@@ -130,12 +131,16 @@ def main():
                 user_input_params.append(value)
                 
             print(f"\n-> Executing: {query_data['label']}")
-            for i,sql in enumerate(sql_commands):
+
+            num_commands = len(sql_commands)
+            for i, sql in enumerate(sql_commands):
                 should_print_header = (i == 0)
-                if i > 0:
+                
+                # Use the original parameter list for every step
+                execute_sql(conn, sql, tuple(user_input_params), print_header=should_print_header)
+                
+                if i < num_commands - 1:
                     print()
-                execute_sql(conn, sql, tuple(user_input_params),print_header=should_print_header)
-            
             
         else:
             print("Invalid option. Please enter a number from the menu.")
