@@ -14,7 +14,7 @@
 14)   Finish Bike Maintenance (Add employees, end date, and type)
 15)   View payment for rental (display payment by rental ID)
 16)   View all available Bikes (For a given datetime, find bikes not already rented)
-17)   
+17)   View Rental History of a Bike by ID
 18)   
 19)   
 20)   
