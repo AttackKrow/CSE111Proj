@@ -23,7 +23,7 @@ QUERIES = {
         'sql': "INSERT INTO customers(c_name, c_email, c_phone) VALUES(?, ?, ?)",
         'params': ['Name', 'Email', 'Phone Number']
     },
-    
+
     #2
     '2': {
         'label': 'Edit Customer Info from Email (name, email, or phone)',
@@ -275,7 +275,7 @@ QUERIES = {
     
     #19
     '19': {
-        'label': 'Cancel Scheduled Maintenance',
+        'label': 'Cancel Scheduled Maintenance by Bike ID',
         'sql': """DELETE FROM Maintenance
                 WHERE m_b_id = ?
                 AND m_enddate IS NULL""",
@@ -284,7 +284,7 @@ QUERIES = {
 
     #20
     '20': {
-        'label': 'Edit Employee Role by ID',
+        'label': 'Edit Employee Role by Employee ID',
         'sql': """UPDATE Employees
                 SET e_position = ?
                 WHERE e_id = ?""",

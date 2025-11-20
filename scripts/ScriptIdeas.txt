@@ -16,6 +16,6 @@
 16)   View payment for rental (display payment by rental ID)
 17)   View all available Bikes (For a given datetime, find bikes not already rented)
 18)   View Rental History of a Bike by ID
-19)   
-20)   
+19)   Cancel Scheduled Maintenance by Bike ID
+20)   Edit Employee Role by ID
    
