@@ -192,7 +192,7 @@ QUERIES = {
                     CEIL((julianday(?3) - julianday(?2)) * 24.0) * (
                         SELECT SUM(b_hourlyrate)
                         FROM Bikes
-                        WHERE b_id IN (SELECT value FROM json_each('["' || REPLACE(?5, ',', '","') || '"]')) -- ?5 is Bike IDs
+                        WHERE b_id IN (SELECT value FROM json_each('["' || REPLACE(?5, ',', '","') || '"]'))
                     ) AS total_cost
             )
             INSERT INTO Rentals (r_c_id, r_startdate, r_enddate, r_billablehours, r_totalcost, r_e_id)
