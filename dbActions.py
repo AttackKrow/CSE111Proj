@@ -1,12 +1,11 @@
-# customer_registration.py
 import sqlite3
 from sqlite3 import Error
-# Import the queries from the configuration file
 from scripts.queries import QUERIES
 
 DATABASE_NAME = "bikerentalshop.sqlite"
 
 def create_connection(db_file):
+    # Create a database connection to the SQLite database specified by db_file
     conn = None
     try:
         conn = sqlite3.connect(db_file)
@@ -17,6 +16,7 @@ def create_connection(db_file):
     return conn
 
 def execute_sql(conn, sql_command, params=(), print_header=True):
+    # Execute an SQL query and handle results
     try:
         cur = conn.cursor()
         cur.execute(sql_command, params)
@@ -26,63 +26,52 @@ def execute_sql(conn, sql_command, params=(), print_header=True):
             rows = cur.fetchall()
             if rows:
 
-                # 1. Get column names
+                # Print formatting for results
                 column_names = [desc[0] for desc in cur.description]
-                
-                # 2. Initialize max_widths with header lengths
                 max_widths = [len(name) for name in column_names]
-                
-                # 3. Convert all rows to strings and find max width for each column
                 str_rows = []
                 for row in rows:
                     str_row = []
                     for i, value in enumerate(row):
-                        # Convert value to string for length calculation
                         str_value = str(value)
                         str_row.append(str_value)
-                        # Update max width if current value length is greater
                         max_widths[i] = max(max_widths[i], len(str_value))
                     str_rows.append(str_row)
 
-                # Add a small padding (e.g., 2 spaces) to all widths
                 total_width = sum(max_widths) + len(max_widths) * 2
                 
-                # 4. Create a format string for printing
                 header_format = "".join([f"{{:<{width + 2}}}" for width in max_widths])
                 
                 if print_header:
-                    # Use total_width for the main separator
                     print("-" * total_width) 
                     print("RESULTS:")
                 
-                # 🏆 Print the PADDED column names
                 print(header_format.format(*column_names))
                 
-                # Print a second separator line for table structure
                 print("-" * total_width) 
                 
-                # Print PADDED rows
                 for str_row in str_rows:
                     print(header_format.format(*str_row))
-                # Commit if a DML command returned rows (like RETURNING)
+                # Commit if the query returned rows but is not a SELECT
                 if not sql_command.strip().upper().startswith("SELECT"):
                     conn.commit()
             else:
+                # No rows returned, likely a parameter was was misinput.
                 print("Query successful, but returned no rows.")
             return rows
         
         # DML (INSERT, UPDATE, DELETE, etc.)
         conn.commit()
 
-        # Check for DML success based on rows affected
+        # Print feedback based on affected rows
         if cur.rowcount > 0:
-            print(f"✅ Query successful. {cur.rowcount} row(s) affected.")
+            print(f"Query successful. {cur.rowcount} row(s) affected.")
         elif cur.rowcount == 0:
             # This covers DELETE/UPDATE that matched no rows, or an INSERT without RETURNING
-            print("✅ Query successful. No rows were affected (0 rows modified/deleted.")
+            print("Query successful. No rows were affected (0 rows modified/deleted.")
         else:
             # cur.rowcount is typically -1 for non-DML (like CREATE TABLE) or when not available
-            print(f"✅ Query successful. Transaction committed.") 
+            print(f"Query successful. Transaction committed.") 
         
     except Error as e:
         # This will catch OperationalError if the table doesn't exist
@@ -90,6 +79,8 @@ def execute_sql(conn, sql_command, params=(), print_header=True):
         return None
 
 def main():
+    # Create a database connection, display the menu, and handle user input.
+    # Run the queries selected by the user from the menu.
     conn = create_connection(DATABASE_NAME)
     
     if conn is None:
@@ -111,9 +102,11 @@ def main():
         
         choice = input("Enter option number: ").strip()
         
+        # Exit option
         if choice == '0':
             break
         
+
         if choice in QUERIES:
             query_data = QUERIES[choice]
             sql_commands = query_data['sql']
@@ -133,6 +126,7 @@ def main():
             print(f"\n-> Executing: {query_data['label']}")
 
             num_commands = len(sql_commands)
+            # Execute each SQL command in sequence from the selected menu option
             for i, sql in enumerate(sql_commands):
                 should_print_header = (i == 0)
                 
@@ -143,7 +137,7 @@ def main():
                     print()
             
         else:
-            print("Invalid option. Please enter a number from the menu.")
+            print("Invalid option. Please enter a value from the menu.")
 
     if conn:
         conn.close()
