@@ -233,6 +233,13 @@ QUERIES = {
         'params': ['End Date/Time (YYYY-MM-DD HH:MM)', 'Employee ID', 'Bike ID']
     },
 
+    #16
+    '16': {
+        'label': 'View Payment for Rental by Rental ID',
+        'sql': """SELECT * FROM Payments WHERE p_r_id = ?""",
+        'params': ['Rental ID']
+    },
+
     #17
     '17': {
         'label':'View Rental History of a Bike by ID',
@@ -241,4 +248,33 @@ QUERIES = {
                     WHERE RB.rb_b_id = ?""",
         'params': ['Bike ID']
     },
+
+    #18
+'18': {
+    'label': 'View Rental History of a Bike by ID',
+    'sql': """SELECT R.*
+              FROM Rentals R
+              JOIN Rental_Bikes RB ON R.r_id = RB.rb_r_id
+              WHERE RB.rb_b_id = ?""",
+    'params': ['Bike ID']
+},
+    
+    #19
+'19': {
+    'label': 'Cancel Scheduled Maintenance',
+    'sql': """DELETE FROM Maintenance
+              WHERE m_b_id = ?
+              AND m_enddate IS NULL""",
+    'params': ['Bike ID']
+},
+
+    #20
+'20': {
+    'label': 'Edit Employee Role by ID',
+    'sql': """UPDATE Employees
+              SET e_position = ?
+              WHERE e_id = ?""",
+    'params': ['New Position', 'Employee ID']
+},
+   
 }
