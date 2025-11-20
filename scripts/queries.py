@@ -1,9 +1,27 @@
+# Query Dictionary for Bike Rental System, run from dbActions.py
+# 
+#  Formatting Guide
+#
+#   #(Number) -- Query Number
+#   'key': { -- String key to reference the query, currently numbers from the ScriptIdeas.txt file. Replace key with value.
+#       'label': -- Short description of the query, displayed to the user in the menu. Comma after each field except params.
+#       'sql': -- The Query(s) to be executed. Can be a single string or a list of strings for multiple queries.
+#                 Queries must all the the full amount of parameters specified in 'params', can use dummy bindings if needed.
+#                 Include Brackets [] around all the queries if using multiple queries, separated by commas. See #5 or #6 for example.
+#       'params':[] -- List of parameter descriptions, in order, to prompt the user for. Use either '?' for inorder references,
+#                    or '?1', '?2', etc. for specific parameter references in the SQL. See #1 or #2 for example.
+#   }, -- End of Query, comma if not last
+#
+#
+#   Triple quotes for multi-line python strings. """string here"""
+#
+
 QUERIES = {
     #1
     '1': {
         'label': 'Register New Customer',
         'sql': "INSERT INTO customers(c_name, c_email, c_phone) VALUES(?, ?, ?)",
-        'params': ['Name', 'Email', 'Number']
+        'params': ['Name', 'Email', 'Phone Number']
     },
     #2
     '2': {
@@ -106,7 +124,7 @@ QUERIES = {
     '4': {
         'label': 'Remove Bike by ID',
         'sql': "DELETE FROM Bikes WHERE b_id = ?",
-        'params': ['BikeID']
+        'params': ['Bike ID']
     },
     #5
     '5': {
@@ -147,7 +165,7 @@ QUERIES = {
             AND R.r_startdate < ?
             AND R.r_startdate > ?
             )""",
-        'params': ['Bike Type', 'Rental End Date/Time (YY-MM-DD HH)', 'Rental Start Date/Time (YY-MM-DD HH)']
+        'params': ['Bike Type', 'Rental End Date/Time (YYYY-MM-DD HH:MM)', 'Rental Start Date/Time (YYYY-MM-DD HH:MM)']
     },
     #10
     '10': {
@@ -169,10 +187,9 @@ QUERIES = {
             WITH Cust AS (SELECT c_id FROM Customers WHERE c_email = ?1),
             Emp AS (SELECT e_id FROM Employees WHERE e_id = ?4),
             Calc AS (
-                -- Uses simple hour subtraction for billable hours and cost
                 SELECT
-                    (CAST(strftime('%H', ?3) AS INT) - CAST(strftime('%H', ?2) AS INT)) AS billable_hours,
-                    (CAST(strftime('%H', ?3) AS INT) - CAST(strftime('%H', ?2) AS INT)) * (
+                    CEIL((julianday(?3) - julianday(?2)) * 24.0) AS billable_hours,
+                    CEIL((julianday(?3) - julianday(?2)) * 24.0) * (
                         SELECT SUM(b_hourlyrate)
                         FROM Bikes
                         WHERE b_id IN (SELECT value FROM json_each('["' || REPLACE(?5, ',', '","') || '"]')) -- ?5 is Bike IDs
@@ -185,31 +202,27 @@ QUERIES = {
             """,
 
             """
-            -- Step 2: Insert Rental_Bikes (Relies on MAX(r_id))
-            -- This step uses the original 5 parameters, but only needs ?5 for bike IDs.
             INSERT INTO Rental_Bikes (rb_r_id, rb_b_id)
             SELECT
-                -- Gets the highest ID, which should be the one just inserted
                 (SELECT MAX(r_id) FROM Rentals),
                 value
-            -- We must reference all 5 parameters to satisfy the driver's requirement for all SQL statements
             FROM json_each('["' || REPLACE(?5, ',', '","') || '"]'), (SELECT ?1, ?2, ?3, ?4) AS dummy_bindings; 
             """
         ],
-        'params': ['Customer Email', 'Start Date (YY-MM-DD HH:MM)', 'End Date (YY-MM-DD HH:MM)', 'Employee ID', 'Bike IDs (Comma Separated)']
+        'params': ['Customer Email', 'Start Date (YYYY-MM-DD HH:MM)', 'End Date (YYYY-MM-DD HH:MM)', 'Employee ID', 'Bike IDs (Comma Separated)']
     },
     #13
     '13': {
         'label':'Add Payment for a Rental by Rental ID',
         'sql':  """ """,
         'params': ['Rental ID', 'Method']
-        # Get customer and employee from rental ID, date from datetime(), amount from rental ID too
+        # Get customer and employee from rental ID, date from datetime() or similar for the current date/time, amount from rental ID too
     },
     #14
     '14': {
         'label':'Schedule Bike Maintenance',
         'sql':  """INSERT INTO Maintenance (m_b_id, m_startdate, m_type) VALUES (?, ?, ?)""",
-        'params': ['Bike ID', 'Start Date (YY-MM-DD)', 'Type of Maintenance']
+        'params': ['Bike ID', 'Start Date/Time (YYYY-MM-DD HH:MM)', 'Type of Maintenance']
     },
     #15
     '15': {
@@ -217,7 +230,7 @@ QUERIES = {
         'sql':  """UPDATE Maintenance 
                     SET m_enddate = ?, m_e_id = ? 
                     WHERE m_b_id = ? AND m_enddate IS NULL""",
-        'params': ['End Date (YY-MM-DD)', 'Employee ID', 'Bike ID']
+        'params': ['End Date/Time (YYYY-MM-DD HH:MM)', 'Employee ID', 'Bike ID']
     },
 
     #17
