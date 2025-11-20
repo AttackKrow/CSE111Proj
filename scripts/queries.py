@@ -2,15 +2,15 @@
 # 
 #  Formatting Guide
 #
-#   #(Number) -- Query Number
-#   'key': { -- String key to reference the query, currently numbers from the ScriptIdeas.txt file. Replace key with value.
-#       'label': -- Short description of the query, displayed to the user in the menu. Comma after each field except params.
-#       'sql': -- The Query(s) to be executed. Can be a single string or a list of strings for multiple queries.
-#                 Queries must all the the full amount of parameters specified in 'params', can use dummy bindings if needed.
-#                 Include Brackets [] around all the queries if using multiple queries, separated by commas. See #5 or #6 for example.
-#       'params':[] -- List of parameter descriptions, in order, to prompt the user for. Use either '?' for inorder references,
-#                    or '?1', '?2', etc. for specific parameter references in the SQL. See #1 or #2 for example.
-#   }, -- End of Query, comma if not last
+#   #(Number)               -- Query Number
+#   'key': {                -- String key to reference the query, currently numbers from the ScriptIdeas.txt file. Replace key with value.
+#       'label':            -- Short description of the query, displayed to the user in the menu. Comma after each field except params.
+#       'sql':              -- The Query(s) to be executed. Can be a single string or a list of strings for multiple queries.
+#                              Queries must all the the full amount of parameters specified in 'params', can use dummy bindings if needed.
+#                              Include Brackets [] around all the queries if using multiple queries, separated by commas. See #5 or #6 for example.
+#       'params':[]         -- List of parameter descriptions, in order, to prompt the user for. Use either '?' for inorder references,
+#                              or '?1', '?2', etc. for specific parameter references in the SQL. See #1 or #2 for example.
+#   },                      -- End of Query, comma if not last
 #
 #
 #   Triple quotes for multi-line python strings. """string here"""
