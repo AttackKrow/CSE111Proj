@@ -170,10 +170,10 @@ QUERIES = {
             SELECT 1 FROM Rentals R
             JOIN Rental_Bikes RB ON R.r_id = RB.rb_r_id
             WHERE RB.rb_b_id = B.b_id
+            AND R.r_enddate > ?
             AND R.r_startdate < ?
-            AND R.r_startdate > ?
             )""",
-        'params': ['Bike Type', 'Rental End Date/Time (YYYY-MM-DD HH:MM)', 'Rental Start Date/Time (YYYY-MM-DD HH:MM)']
+        'params': ['Bike Type', 'Rental Start Date/Time (YYYY-MM-DD HH:MM)', 'Rental End Date/Time (YYYY-MM-DD HH:MM)']
     },
 
     #10
@@ -256,11 +256,16 @@ QUERIES = {
 
     #17
     '17': {
-        'label':'View Rental History of a Bike by ID',
-        'sql':  """SELECT R.* FROM Rentals R
-                    JOIN Rental_Bikes RB ON R.r_id = RB.rb_r_id
-                    WHERE RB.rb_b_id = ?""",
-        'params': ['Bike ID']
+        'label':'View all available Bikes for a Given Date/Time Range',
+        'sql':  """ SELECT B.* FROM Bikes B 
+                    WHERE NOT EXISTS (
+                        SELECT 1 FROM Rentals R
+                        JOIN Rental_Bikes RB ON R.r_id = RB.rb_r_id
+                        WHERE RB.rb_b_id = B.b_id
+                        AND R.r_enddate > ?
+                        AND R.r_startdate < ?
+                        )""",
+        'params': ['Rental Start Date/Time (YYYY-MM-DD HH:MM)', 'Rental End Date/Time (YYYY-MM-DD HH:MM)']
     },
 
     #18
