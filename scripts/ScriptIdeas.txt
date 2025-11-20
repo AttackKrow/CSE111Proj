@@ -16,6 +16,6 @@
 16)   View payment for rental (display payment by rental ID)
 17)   View all available Bikes (For a given datetime, find bikes not already rented)
 18)   View Rental History of a Bike by ID
-19)   
-20)   
+19)   Cancel maintenance (Remove maintenance entry by unfilled end date if customer cancels appointment)
+20)   Edit Employee role (Choose by ID, assign new role by e_position)
    
