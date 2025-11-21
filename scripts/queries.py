@@ -226,8 +226,13 @@ QUERIES = {
     #13
     '13': {
         'label':'Add Payment for a Rental by Rental ID',
-        'sql':  """ """,
-        'params': ['Rental ID', 'Method']
+        'sql':  [""" INSERT INTO Payments (p_method,p_transactiondate,p_amount,p_c_id,p_e_id)
+                    SELECT ?2, DATETIME('now'),
+                        (SELECT r_totalcost FROM Rentals WHERE r_id = ?1),
+                        (SELECT r_c_id FROM Rentals WHERE r_id = ?1),
+                        ?3; """,
+                """ UPDATE Rentals SET r_p_id = ?2, r_p_id = ?3, r_p_id = (SELECT MAX(p_id) FROM Payments) WHERE r_id = ?1; """],
+        'params': ['Rental ID', 'Payment Method', 'Employee ID']
         # Get customer and employee from rental ID, date from datetime() or similar for the current date/time, amount from rental ID too
     },
 
@@ -249,8 +254,10 @@ QUERIES = {
     
     #16
     '16': {
-        'label': 'View Payment for Rental by Rental ID',
-        'sql': """SELECT * FROM Payments WHERE p_r_id = ?""",
+        'label': 'View Payment for a Rental by Rental ID',
+        'sql': """SELECT ?1 AS RentalID,P.*
+                  FROM Payments P
+                  WHERE P.p_id = (SELECT r_p_id FROM Rentals WHERE r_id = ?1)""",
         'params': ['Rental ID']
     },
 
