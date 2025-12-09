@@ -120,7 +120,7 @@ def main():
             
             # Collect required parameters from the user
             for param_label in required_params:
-                value = input(f"Enter value for '{param_label}': ").strip()
+                value = input(f"Enter the {param_label}: ").strip()
                 user_input_params.append(value)
                 
             print(f"\n-> Executing: {query_data['label']}")
