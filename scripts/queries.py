@@ -25,21 +25,7 @@ QUERIES = {
     },
 
     #2
-    '2': {
-        'label': 'Edit Customer Info from Email (name, email, or phone)',
-        'sql': """  UPDATE Customers
-                    SET 
-                        c_name = CASE UPPER(?1) WHEN 'NAME' THEN ?2 ELSE c_name END,
-                        c_email = CASE UPPER(?1) WHEN 'EMAIL' THEN ?2 ELSE c_email END,
-                        c_phone = CASE UPPER(?1) WHEN 'PHONE' THEN ?2 ELSE c_phone END
-                    WHERE 
-                        c_email = ?3
-                        AND UPPER(?1) IN ('NAME', 'EMAIL', 'PHONE');""",
-        'params': ['Field (Name, Email, or Phone)','New Field Value','Current Email of Customer on File']
-    },
-
-    #3
-    "3": {
+    "2": {
         'label': "Add New Bike",
         'sql': """INSERT INTO Bikes (b_id, b_type, b_model, b_hourlyrate)
             SELECT
@@ -123,75 +109,15 @@ QUERIES = {
     "params": ["Type", "Model"]
     },
 
-    #4
-    '4': {
-        'label': 'Remove Bike by ID',
-        'sql': "DELETE FROM Bikes WHERE b_id = ?",
-        'params': ['Bike ID']
-    },
-
-    #5
-    '5': {
-        'label': 'Find Customer Payments by Email',
-        'sql':["SELECT * FROM Customers WHERE c_email = ?",
-               "SELECT * FROM Payments WHERE p_c_id = (SELECT c_id FROM Customers WHERE c_email = ?)" ],
-        'params': ['Email Address']
-    },
-
-    #6
-    '6': {
-        'label': 'Find Customer Rental History by Email',
-        'sql':[ "SELECT * FROM Customers WHERE c_email = ?",
-                "SELECT * FROM Rentals WHERE r_c_id = (SELECT c_id FROM Customers WHERE c_email = ?)",
-                "SELECT * FROM Rental_Bikes WHERE rb_r_id IN (SELECT r_id FROM Rentals WHERE r_c_id = (SELECT c_id FROM Customers WHERE c_email = ?))" ],
-        'params': ['Email Address']
-    },
-
-    #7
-    '7': {
-        'label':'Find Customers Most Recent Rental by Email',
-        'sql':  "SELECT * FROM Rentals WHERE r_c_id = (SELECT c_id FROM Customers WHERE c_email = ?) ORDER BY r_startdate DESC LIMIT 1",
-        'params': ['Email Address']
-    },
-
-    #8
-    '8': {
-        'label':'View Mainenance History for a Bike by Bike ID',
-        'sql':  """SELECT * FROM Maintenance WHERE m_b_id = ?""",
-        'params': ['Bike ID']
-    },
-
-    #9
-    '9': {
-        'label':'Find Available Bikes for a Given Date/Time Range',
-        'sql':  """SELECT B.* FROM Bikes B 
-        WHERE B.b_type = ?
-        AND NOT EXISTS (
-            SELECT 1 FROM Rentals R
-            JOIN Rental_Bikes RB ON R.r_id = RB.rb_r_id
-            WHERE RB.rb_b_id = B.b_id
-            AND R.r_enddate > ?
-            AND R.r_startdate < ?
-            )""",
-        'params': ['Bike Type', 'Rental Start Date/Time (YYYY-MM-DD HH:MM)', 'Rental End Date/Time (YYYY-MM-DD HH:MM)']
-    },
-
-    #10
-    '10': {
+    #3
+    '3': {
         'label':'Add new Employee',
         'sql':  """INSERT INTO Employees (e_name, e_position) VALUES (?, ?)""",
         'params': ['Name', 'Position']
     },
 
-    #11
-    '11': {
-        'label':'Remove Employee by ID',
-        'sql':  "DELETE FROM Employees WHERE e_id = ?",
-        'params': ['Employee ID']
-    },
-
-    #12 
-    '12': {
+    #4
+    '4': {
         'label':'Add New Rental and Link Bikes',
         'sql': [
             """
@@ -223,8 +149,8 @@ QUERIES = {
         'params': ['Customer Email', 'Start Date (YYYY-MM-DD HH:MM)', 'End Date (YYYY-MM-DD HH:MM)', 'Employee ID', 'Bike IDs (Comma Separated)']
     },
 
-    #13
-    '13': {
+    #5
+    '5': {
         'label':'Add Payment for a Rental by Rental ID',
         'sql':  [""" INSERT INTO Payments (p_method,p_transactiondate,p_amount,p_c_id,p_e_id)
                     SELECT ?2, DATETIME('now'),
@@ -235,21 +161,104 @@ QUERIES = {
         'params': ['Rental ID', 'Payment Method', 'Employee ID']
         # Get customer and employee from rental ID, date from datetime() or similar for the current date/time, amount from rental ID too
     },
+    
+    #6
+    '6': {
+        'label': 'Edit Customer Info from Email (name, email, or phone)',
+        'sql': """  UPDATE Customers
+                    SET 
+                        c_name = CASE UPPER(?1) WHEN 'NAME' THEN ?2 ELSE c_name END,
+                        c_email = CASE UPPER(?1) WHEN 'EMAIL' THEN ?2 ELSE c_email END,
+                        c_phone = CASE UPPER(?1) WHEN 'PHONE' THEN ?2 ELSE c_phone END
+                    WHERE 
+                        c_email = ?3
+                        AND UPPER(?1) IN ('NAME', 'EMAIL', 'PHONE');""",
+        'params': ['Field (Name, Email, or Phone)','New Field Value','Current Email of Customer on File']
+    },
+
+    #7
+    '7': {
+        'label': 'Edit Employee Role by Employee ID',
+        'sql': """UPDATE Employees
+                SET e_position = ?
+                WHERE e_id = ?""",
+        'params': ['New Position', 'Employee ID']
+    },
+
+    #8
+    '8': {
+        'label': 'Find Customer Rental History by Email',
+        'sql':[ "SELECT * FROM Customers WHERE c_email = ?",
+                "SELECT * FROM Rentals WHERE r_c_id = (SELECT c_id FROM Customers WHERE c_email = ?)",
+                "SELECT * FROM Rental_Bikes WHERE rb_r_id IN (SELECT r_id FROM Rentals WHERE r_c_id = (SELECT c_id FROM Customers WHERE c_email = ?))" ],
+        'params': ['Email Address']
+    },
+
+    #9
+    '9': {
+        'label':'Find Available Bikes for a Given Date/Time Range',
+        'sql':  """SELECT B.* FROM Bikes B 
+        WHERE B.b_type = ?
+        AND NOT EXISTS (
+            SELECT 1 FROM Rentals R
+            JOIN Rental_Bikes RB ON R.r_id = RB.rb_r_id
+            WHERE RB.rb_b_id = B.b_id
+            AND R.r_enddate > ?
+            AND R.r_startdate < ?
+            )""",
+        'params': ['Bike Type', 'Rental Start Date/Time (YYYY-MM-DD HH:MM)', 'Rental End Date/Time (YYYY-MM-DD HH:MM)']
+    },
+
+    #10
+    '10': {
+        'label':'Find Customers Most Recent Rental by Email',
+        'sql':  "SELECT * FROM Rentals WHERE r_c_id = (SELECT c_id FROM Customers WHERE c_email = ?) ORDER BY r_startdate DESC LIMIT 1",
+        'params': ['Email Address']
+    },
+    
+
+    #11
+    '11': {
+        'label': 'Find Customer Payments by Email',
+        'sql':["SELECT * FROM Customers WHERE c_email = ?",
+               "SELECT * FROM Payments WHERE p_c_id = (SELECT c_id FROM Customers WHERE c_email = ?)" ],
+        'params': ['Email Address']
+    },
+
+
+    #12 
+    '12': {
+        'label': 'Remove Bike by ID',
+        'sql': "DELETE FROM Bikes WHERE b_id = ?",
+        'params': ['Bike ID']
+    },
+
+    #13
+    '13': {
+        'label':'Remove Employee by ID',
+        'sql':  "DELETE FROM Employees WHERE e_id = ?",
+        'params': ['Employee ID']
+    },
 
     #14
     '14': {
-        'label':'Schedule Bike Maintenance',
-        'sql':  """INSERT INTO Maintenance (m_b_id, m_startdate, m_type) VALUES (?, ?, ?)""",
-        'params': ['Bike ID', 'Start Date/Time (YYYY-MM-DD HH:MM)', 'Type of Maintenance']
+        'label':'View all available Bikes for a Given Date/Time Range',
+        'sql':  """ SELECT B.* FROM Bikes B 
+                    WHERE NOT EXISTS (
+                        SELECT 1 FROM Rentals R
+                        JOIN Rental_Bikes RB ON R.r_id = RB.rb_r_id
+                        WHERE RB.rb_b_id = B.b_id
+                        AND R.r_enddate > ?
+                        AND R.r_startdate < ?
+                        )""",
+        'params': ['Rental Start Date/Time (YYYY-MM-DD HH:MM)', 'Rental End Date/Time (YYYY-MM-DD HH:MM)']
     },
 
     #15
     '15': {
-        'label':'Finish Bike Maintenance',
-        'sql':  """UPDATE Maintenance 
-                    SET m_enddate = ?, m_e_id = ? 
-                    WHERE m_b_id = ? AND m_enddate IS NULL""",
-        'params': ['End Date/Time (YYYY-MM-DD HH:MM)', 'Employee ID', 'Bike ID']
+        'label':'View Maintenance History for a Bike by Bike ID',
+        'sql':  """SELECT * FROM Maintenance WHERE m_b_id = ?""",
+        'params': ['Bike ID']
     },
     
     #16
@@ -263,26 +272,19 @@ QUERIES = {
 
     #17
     '17': {
-        'label':'View all available Bikes for a Given Date/Time Range',
-        'sql':  """ SELECT B.* FROM Bikes B 
-                    WHERE NOT EXISTS (
-                        SELECT 1 FROM Rentals R
-                        JOIN Rental_Bikes RB ON R.r_id = RB.rb_r_id
-                        WHERE RB.rb_b_id = B.b_id
-                        AND R.r_enddate > ?
-                        AND R.r_startdate < ?
-                        )""",
-        'params': ['Rental Start Date/Time (YYYY-MM-DD HH:MM)', 'Rental End Date/Time (YYYY-MM-DD HH:MM)']
-    },
-
-    #18
-    '18': {
         'label': 'View Rental History of a Bike by ID',
         'sql': """SELECT R.*
                 FROM Rentals R
                 JOIN Rental_Bikes RB ON R.r_id = RB.rb_r_id
                 WHERE RB.rb_b_id = ?""",
         'params': ['Bike ID']
+    },
+
+    #18
+    '18': {
+        'label':'Schedule Bike Maintenance',
+        'sql':  """INSERT INTO Maintenance (m_b_id, m_startdate, m_type) VALUES (?, ?, ?)""",
+        'params': ['Bike ID', 'Start Date/Time (YYYY-MM-DD HH:MM)', 'Type of Maintenance']
     },
     
     #19
@@ -296,10 +298,10 @@ QUERIES = {
 
     #20
     '20': {
-        'label': 'Edit Employee Role by Employee ID',
-        'sql': """UPDATE Employees
-                SET e_position = ?
-                WHERE e_id = ?""",
-        'params': ['New Position', 'Employee ID']
-    }
+        'label':'Finish Bike Maintenance',
+        'sql':  """UPDATE Maintenance 
+                    SET m_enddate = ?, m_e_id = ? 
+                    WHERE m_b_id = ? AND m_enddate IS NULL""",
+        'params': ['End Date/Time (YYYY-MM-DD HH:MM)', 'Employee ID', 'Bike ID']
+    },
 }
